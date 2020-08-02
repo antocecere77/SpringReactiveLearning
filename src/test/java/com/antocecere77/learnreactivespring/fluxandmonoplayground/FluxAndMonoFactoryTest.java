@@ -1,6 +1,6 @@
 package com.antocecere77.learnreactivespring.fluxandmonoplayground;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -44,7 +44,7 @@ public class FluxAndMonoFactoryTest {
     }
 
     @Test
-    void monoUsingJustOrEmpty() {
+    public void monoUsingJustOrEmpty() {
         Mono<String> mono = Mono.justOrEmpty(null); //Mono.Empty();
 
         StepVerifier.create(mono.log())
