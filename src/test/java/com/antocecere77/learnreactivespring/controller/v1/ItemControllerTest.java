@@ -136,4 +136,34 @@ public class ItemControllerTest {
                 .expectBody(Void.class);
     }
 
+    @Test
+    public void updateItem() {
+        double newPrice = 129.99;
+        Item item = new Item(null, "Beats Headphones", newPrice);
+
+        webTestClient.put()
+                .uri(ItemsConstants.ITEM_END_POINT_V1.concat("/{id}"), "ABC")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(item), Item.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.price").isEqualTo(newPrice);
+    }
+
+    @Test
+    public void updateItem_notFound() {
+        double newPrice = 129.99;
+        Item item = new Item(null, "Beats Headphones", newPrice);
+
+        webTestClient.put()
+                .uri(ItemsConstants.ITEM_END_POINT_V1.concat("/{id}"), "DEF")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(item), Item.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
 }
