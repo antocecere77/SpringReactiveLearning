@@ -1,24 +1,24 @@
 spring:
   profiles:
-    active: dev
+    active:
 ---
 spring:
   profiles: dev
   data.mongodb:
     host: localhost
     port: 27017
-    databae: local
+    database: local
 ---
 spring:
   profiles: nonprod
   data.mongodb:
     host: localhost
     port: 27017
-    databae: local
+    database: local
 ---
 spring:
   profiles: prod
   data.mongodb:
     host: localhost
     port: 27017
-    databae: local
+    database: local
