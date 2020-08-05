@@ -38,7 +38,7 @@ public class ItemControllerTest {
     List<Item> itemList = Arrays.asList(new Item(null, "Samsung TV", 400.0),
             new Item(null, "LG TV", 420.0),
             new Item(null, "Apple Watch", 299.99),
-            new Item(null, "Beats Headphones", 149.99));
+            new Item("ABC", "Beats Headphones", 149.99));
 
     @Before
     public void setUp() {
@@ -91,4 +91,23 @@ public class ItemControllerTest {
                 .expectNextCount(4)
                 .verifyComplete();
     }
+
+    @Test
+    public void getOneItem() {
+        webTestClient.get()
+                .uri(ItemsConstants.ITEM_END_POINT_V1.concat("/{id}"), "ABC")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.price", 149.99);
+    }
+
+    @Test
+    public void getOneItem_notFound() {
+        webTestClient.get()
+                .uri(ItemsConstants.ITEM_END_POINT_V1.concat("/{id}"), "DEF")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
 }
