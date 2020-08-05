@@ -17,6 +17,7 @@ import java.util.List;
 
 @DataMongoTest
 @RunWith(SpringRunner.class)
+@DirtiesContext
 public class ItemReactiveRepositoryTest {
 
     @Autowired
