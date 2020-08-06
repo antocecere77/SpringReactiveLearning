@@ -1,6 +1,5 @@
 package com.antocecere77.learnreactivespring.router;
 
-import com.antocecere77.learnreactivespring.constants.ItemsConstants;
 import com.antocecere77.learnreactivespring.handler.ItemsHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +19,8 @@ public class ItemsRouter {
     public RouterFunction<ServerResponse> itemsRoute(ItemsHandler itemsHandler) {
         return RouterFunctions
                 .route(GET(ITEM_FUNCTIONAL_END_POINT_V1)
-                .and(accept(MediaType.APPLICATION_JSON)), itemsHandler::getAllItems);
+                .and(accept(MediaType.APPLICATION_JSON)), itemsHandler::getAllItems)
+                .andRoute(GET(ITEM_FUNCTIONAL_END_POINT_V1 + "/{id}")
+                .and(accept(MediaType.APPLICATION_JSON)), itemsHandler::getOneItem);
     }
 }
