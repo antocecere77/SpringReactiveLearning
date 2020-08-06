@@ -2,6 +2,7 @@ package com.antocecere77.learnreactivespring.handler;
 
 import com.antocecere77.learnreactivespring.document.Item;
 import com.antocecere77.learnreactivespring.repository.ItemReactiveRepository;
+import com.mongodb.connection.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -45,4 +46,12 @@ public class ItemsHandler {
                         .body(itemReactiveRepository.save(item), Item.class));
     }
 
+    public Mono<ServerResponse> deleteItem(ServerRequest serverRequest) {
+        String id = serverRequest.pathVariable("id");
+        Mono<Void> deletedItem = itemReactiveRepository.deleteById(id);
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(deletedItem, Void.class);
+    }
 }
