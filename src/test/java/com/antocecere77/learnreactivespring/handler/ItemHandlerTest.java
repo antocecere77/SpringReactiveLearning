@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Arrays;
@@ -106,5 +107,20 @@ public class ItemHandlerTest {
                 .uri(ItemsConstants.ITEM_FUNCTIONAL_END_POINT_V1.concat("/{id}"), "DEF")
                 .exchange()
                 .expectStatus().isNotFound();
+    }
+
+    @Test
+    public void testCreateItem() {
+
+        Item item = new Item(null,"Iphone X", 999.99);
+        webTestClient.post().uri(ItemsConstants.ITEM_FUNCTIONAL_END_POINT_V1)
+                .body(Mono.just(item), Item.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.id").isNotEmpty()
+                .jsonPath("$.description").isEqualTo("Iphone X")
+                .jsonPath("$.price").isEqualTo("999.99");
     }
 }
