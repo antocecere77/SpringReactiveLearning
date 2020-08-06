@@ -132,6 +132,30 @@ public class ItemHandlerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Void.class);
+    }
 
+    @Test
+    public void testUpdateItem() {
+        double newPrice = 129.99;
+        Item item = new Item(null,"Beats HeadPhones", newPrice);
+        webTestClient.put().uri(ItemsConstants.ITEM_FUNCTIONAL_END_POINT_V1.concat("/{id}"), "ABC")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(item), Item.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.price",newPrice);
+    }
+
+    @Test
+    public void testUpdateItem_notFound() {
+        double newPrice=129.99;
+        Item item = new Item(null,"Beats HeadPhones", newPrice);
+        webTestClient.put().uri(ItemsConstants.ITEM_FUNCTIONAL_END_POINT_V1.concat("/{id}"), "DEF") //no record with this ids
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(item), Item.class)
+                .exchange()
+                .expectStatus().isNotFound();
     }
 }
