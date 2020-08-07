@@ -1,6 +1,8 @@
 package com.antocecere77.learnreactivespring.handler;
 
 import com.antocecere77.learnreactivespring.document.Item;
+import com.antocecere77.learnreactivespring.document.ItemCapped;
+import com.antocecere77.learnreactivespring.repository.ItemReactiveCappedRepository;
 import com.antocecere77.learnreactivespring.repository.ItemReactiveRepository;
 import com.mongodb.connection.Server;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class ItemsHandler {
 
     @Autowired
     ItemReactiveRepository itemReactiveRepository;
+
+    @Autowired
+    ItemReactiveCappedRepository itemReactiveCappedRepository;
 
     static Mono<ServerResponse> notFound = ServerResponse.notFound().build();
 
@@ -78,5 +83,11 @@ public class ItemsHandler {
 
     public Mono<ServerResponse> itemsException(ServerRequest serverRequest) {
         throw new RuntimeException("RuntimException occurred");
+    }
+
+    public Mono<ServerResponse> itemsStream(ServerRequest serverRequest) {
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_STREAM_JSON)
+                .body(itemReactiveCappedRepository.findItemsBy(), ItemCapped.class);
     }
 }
