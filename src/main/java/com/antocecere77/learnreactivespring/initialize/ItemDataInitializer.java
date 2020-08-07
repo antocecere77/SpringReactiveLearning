@@ -2,7 +2,9 @@ package com.antocecere77.learnreactivespring.initialize;
 
 import com.antocecere77.learnreactivespring.document.Item;
 import com.antocecere77.learnreactivespring.document.ItemCapped;
+import com.antocecere77.learnreactivespring.repository.ItemReactiveCappedRepository;
 import com.antocecere77.learnreactivespring.repository.ItemReactiveRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -11,9 +13,11 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Component
 @Profile("!test")
 public class ItemDataInitializer implements CommandLineRunner {
@@ -22,12 +26,16 @@ public class ItemDataInitializer implements CommandLineRunner {
     ItemReactiveRepository itemReactiveRepository;
 
     @Autowired
+    ItemReactiveCappedRepository itemReactiveCappedRepository;
+
+    @Autowired
     MongoOperations mongoOperations;
 
     @Override
     public void run(String... args) throws Exception {
         initialDataSetup();
         createCappedCollection();
+        dataSetupForCappedCollection();
     }
 
     public List<Item> data() {
@@ -35,6 +43,14 @@ public class ItemDataInitializer implements CommandLineRunner {
                 new Item(null, "LG TV", 329.99),
                 new Item(null, "Apple watch", 349.99),
                 new Item("ABC", "Beats Headphones", 19.99));
+    }
+
+    public void dataSetupForCappedCollection() {
+        Flux<ItemCapped> itemCappedFlux = Flux.interval(Duration.ofSeconds(1))
+                .map(i -> new ItemCapped(null, "Random Item " + 1, (100.00 + i)));
+
+        itemReactiveCappedRepository.insert(itemCappedFlux)
+                .subscribe(itemCapped -> log.info("Inserted item is " + itemCapped));
     }
 
     private void initialDataSetup() {
