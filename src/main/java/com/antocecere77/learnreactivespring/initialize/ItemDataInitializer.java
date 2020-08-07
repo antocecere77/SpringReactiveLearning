@@ -1,10 +1,13 @@
 package com.antocecere77.learnreactivespring.initialize;
 
 import com.antocecere77.learnreactivespring.document.Item;
+import com.antocecere77.learnreactivespring.document.ItemCapped;
 import com.antocecere77.learnreactivespring.repository.ItemReactiveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.mongodb.core.CollectionOptions;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -18,9 +21,13 @@ public class ItemDataInitializer implements CommandLineRunner {
     @Autowired
     ItemReactiveRepository itemReactiveRepository;
 
+    @Autowired
+    MongoOperations mongoOperations;
+
     @Override
     public void run(String... args) throws Exception {
         initialDataSetup();
+        createCappedCollection();
     }
 
     public List<Item> data() {
@@ -36,5 +43,10 @@ public class ItemDataInitializer implements CommandLineRunner {
                 .flatMap(itemReactiveRepository::save)
                 .thenMany(itemReactiveRepository.findAll())
                 .subscribe(item -> System.out.println("Item inserted from CommandLineRunner: " + item));
+    }
+
+    private void createCappedCollection() {
+        mongoOperations.dropCollection(ItemCapped.class);
+        mongoOperations.createCollection(ItemCapped.class, CollectionOptions.empty().maxDocuments(20).size(50000).capped());
     }
 }
