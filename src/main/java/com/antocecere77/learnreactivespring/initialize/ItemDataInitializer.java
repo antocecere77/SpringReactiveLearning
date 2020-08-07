@@ -47,7 +47,7 @@ public class ItemDataInitializer implements CommandLineRunner {
 
     public void dataSetupForCappedCollection() {
         Flux<ItemCapped> itemCappedFlux = Flux.interval(Duration.ofSeconds(1))
-                .map(i -> new ItemCapped(null, "Random Item " + 1, (100.00 + i)));
+                .map(i -> new ItemCapped(null, "Random Item " + i, (100.00 + i)));
 
         itemReactiveCappedRepository.insert(itemCappedFlux)
                 .subscribe(itemCapped -> log.info("Inserted item is " + itemCapped));
