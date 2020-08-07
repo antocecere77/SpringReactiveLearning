@@ -75,4 +75,8 @@ public class ItemsHandler {
                         .body(fromObject(item)))
                 .switchIfEmpty(notFound);
     }
+
+    public Mono<ServerResponse> itemsException(ServerRequest serverRequest) {
+        throw new RuntimeException("RuntimException occurred");
+    }
 }
